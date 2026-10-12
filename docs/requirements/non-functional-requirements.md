@@ -8,9 +8,9 @@ This document defines the key quality attributes and operational constraints of 
 
 **NFR-01** — The system shall support concurrent queue operations without compromising data consistency.
 
-**NFR-02** — The system shall prevent race conditions during concurrent ticket issuance and queue processing.
+**NFR-02** — The system shall prevent race conditions during concurrent ticket issuance, ticket cancellation, customer calling, service completion, and No-Show recording. This includes preventing a customer from obtaining more than one active ticket through concurrent requests.
 
-**NFR-03** — The system shall support at least **100 concurrent ticket requests within one second** without generating duplicate ticket numbers.
+**NFR-03** — The system shall support at least **100 concurrent ticket requests within one second** without generating duplicate ticket numbers and without losing any valid ticket. Response latency, error rate and throughput under this load shall be measured with k6 and reported; no mandatory numeric latency threshold is defined.
 
 **NFR-04** — Failed transactional operations shall not leave the system in an inconsistent state.
 
@@ -20,7 +20,7 @@ This document defines the key quality attributes and operational constraints of 
 
 **NFR-05** — Relevant queue and ticket state changes shall be delivered to connected clients in real time.
 
-**NFR-06** — Customers shall receive a real-time notification when their ticket is called, without requiring a page refresh.
+**NFR-06** — Connected customers shall receive a real-time notification when their ticket is called, without requiring a page refresh. A customer who is not connected at that moment shall be shown the current ticket status after reconnecting.
 
 **NFR-07** — Real-time events shall be delivered only to the relevant branch and authorized users.
 
@@ -28,7 +28,7 @@ This document defines the key quality attributes and operational constraints of 
 
 ## 3. Performance and High Load
 
-**NFR-08** — The system shall remain responsive under normal operating conditions.
+**NFR-08** — The system shall remain responsive under normal operating conditions. Responsiveness shall be assessed through k6 measurements, which are recorded and reported.
 
 **NFR-09** — The system shall maintain stable behavior as the number of concurrent requests increases.
 

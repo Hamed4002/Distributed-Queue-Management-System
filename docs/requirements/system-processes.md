@@ -4,13 +4,30 @@
 
 The system is a **Distributed Real-Time Queue Management System** designed for multi-branch service organizations.
 
-Each branch provides one or more specialized services through dedicated counters. Customers select a branch and the service they require, then receive a ticket and join the corresponding queue.
+Services are defined once in an organization-wide **service catalog** managed by Global Administrators. Each branch provides one or more of these services (as Branch Services) through dedicated counters. Customers first select the service they require and the city in which they want to receive the service. They may also optionally provide their location. The system then evaluates eligible branches (active branches in the city that provide the service through an active Branch Service and have at least one active counter for it) based on the estimated waiting time for the selected service and, when a location is available, the distance to each branch. The customer chooses a branch and then receives a ticket and joins the corresponding queue. A customer may hold only one active ticket at a time.
 
-Operators manage customers through their assigned counters. When a customer is called and served, the ticket state is updated and the queue continues.
+Operators manage customers through their assigned counters. They call customers in first-in, first-out order, provide services, complete service interactions, and handle cases where a customer does not appear when called. An operator may record a ticket as `NO_SHOW` only after at least 60 seconds have elapsed since the customer was called, provided that the operator confirms the customer has not appeared and the ticket remains in the `CALLED` status.
 
-Administrators manage system resources and monitor operations according to their access scope.
+Administrators manage system resources and monitor operations according to their access scope. Global Administrators can additionally view and emergency-deactivate the Branch Services, counters, and operators of any branch.
 
 The system also provides user registration, authentication, and authorization to ensure secure access to system resources and operations.
+
+---
+
+## Ticket Lifecycle
+
+```text
+                 ┌──────────── Cancel (Customer) ────────────► CANCELLED
+                 │
+(Issue) ──► WAITING ──── Call (Operator) ────► CALLED ──── Complete (Operator) ────► COMPLETED
+                 ▲                               │
+                 │                               ├──── No-Show, ≥ 60 s (Operator) ──► NO_SHOW
+                 │                               │
+                 └─── Counter or operator ───────┘
+                      deactivated (System)
+```
+
+`COMPLETED`, `CANCELLED` and `NO_SHOW` are final statuses. A service interrupted by the deactivation of its counter or operator is not considered completed and produces no Service Log.
 
 ---
 
@@ -28,30 +45,67 @@ Authorize Access
 Use System According to Role
 ```
 
-Customer queue workflow:
+### Customer Queue Workflow
 
 ```text
 Customer
    ↓
-Select Branch
-   ↓
 Select Service
    ↓
-Obtain Ticket
+Select City
+   ↓
+Provide Location (Optional)
+   ↓
+Compare Eligible Branches
+   ├── Estimated Waiting Time
+   └── Distance (if Location is provided)
+   ↓
+Select Branch
+   ↓
+Obtain Ticket (rejected if the customer already has an active ticket)
    ↓
 Join Queue
    ↓
-Wait
-   ↓
-Operator Calls Next Customer
-   ↓
-Customer Receives Notification
-   ↓
-Service is Provided
-   ↓
-Service is Completed
-   ↓
-Service Log is Recorded
+Wait (customer can view own ticket status at any time)
+   ├── Cancel Ticket
+   │      └── Allowed only for own ticket while status is WAITING
+   │
+   └── Operator Calls Next Customer (oldest WAITING ticket)
+              ↓
+       Ticket Status → CALLED
+              ↓
+       Customer is Notified
+       (if not connected, status is shown on reconnection)
+              ↓
+       Counter or Operator Deactivated?
+          ├── Yes → Ticket Returns to WAITING
+          │          (customer notified, another counter takes over)
+          │
+          └── No
+                 ↓
+       Customer Arrives?
+          ├── Yes → Service is Provided
+          │          ↓
+          │     Service is Completed
+          │          ↓
+          │     Service Log is Recorded
+          │          ↓
+          │     Counter Becomes Available
+          │
+          └── No → Wait Until 60 Seconds Have Elapsed
+                         ↓
+                  Customer Still Absent?
+                         ↓
+                  Is Ticket Still CALLED?
+                    ├── Yes → Operator Confirms and Records NO_SHOW
+                    │              ↓
+                    │       Ticket Status is Updated
+                    │              ↓
+                    │       Counter Becomes Available
+                    │              ↓
+                    │       Queue Continues
+                    │
+                    └── No → Reject No-Show Operation
 ```
 
 Administrative operations run alongside the queue process:
@@ -59,10 +113,12 @@ Administrative operations run alongside the queue process:
 ```text
 Global Administrator
    ├── Manage Branches
-   └── Manage Branch Administrators
+   ├── Manage Service Catalog
+   ├── Manage Branch Administrators
+   └── View and Emergency-Deactivate Branch Resources
               ↓
        Branch Administrator
-          ├── Manage Services
+          ├── Manage Branch Services (enable / activate / deactivate)
           ├── Manage Counters
           └── Manage Operators
 ```
@@ -86,7 +142,7 @@ Enter Registration Information
    ↓
 System Validates Information
    ↓
-System Creates User Account
+System Creates User Account (Customer role only)
    ↓
 Registration Completed
 ```
@@ -113,6 +169,13 @@ Enter Login Credentials
 System Validates Credentials
    ↓
 Authentication Successful
+   ↓
+Temporary Password?
+   ├── Yes → Require Password Change
+   │            ↓
+   │       User Changes Password
+   │
+   └── No  → (continue)
    ↓
 User Gains Access
 ```
@@ -153,11 +216,50 @@ Access Granted or Denied
 
 ---
 
-## 4. Obtain Ticket
+## 4. Compare Eligible Branches
 
 ### Objective
 
-Allow a customer to join the appropriate queue and receive a ticket for a selected branch and service.
+Allow a customer to compare eligible branches that provide the selected service in the selected city before obtaining a ticket.
+
+### Workflow
+
+```text
+Customer
+   ↓
+Select Service (from the active service catalog)
+   ↓
+Select City (from the list of cities with active branches)
+   ↓
+Provide Location (Optional)
+   ↓
+System Identifies Eligible Branches
+   (active, in the city, provides the service through an active
+    Branch Service, has at least one active counter for it)
+   ↓
+System Calculates Estimated Waiting Time
+   (may be "unknown" if the queue has no service history)
+   ↓
+Location Provided?
+   ├── Yes → Calculate Distance (straight line, km)
+   └── No  → Skip Distance Calculation
+                  ↓
+        Display Branch Comparison
+```
+
+An active counter is a counter that is itself active and has an active operator assigned to it.
+
+### Involved Actors
+
+- Customer
+
+---
+
+## 5. Obtain Ticket
+
+### Objective
+
+Allow a customer to select a branch and join the appropriate service queue by receiving a ticket.
 
 ### Workflow
 
@@ -166,11 +268,18 @@ Customer
    ↓
 Select Branch
    ↓
-Select Service
-   ↓
 Request Ticket
    ↓
+System Validates Branch and Service Eligibility
+   (active branch, active catalog Service, active Branch Service,
+    at least one active counter)
+   ↓
+System Checks the Customer Has No Active Ticket
+   ↓
 System Creates Ticket
+   ↓
+System Assigns Ticket Number
+   (unique per branch + service + day, restarting daily)
    ↓
 Customer Joins Queue
 ```
@@ -181,7 +290,41 @@ Customer Joins Queue
 
 ---
 
-## 5. Call Next Customer
+## 6. Cancel Ticket
+
+### Objective
+
+Allow a customer to cancel their own ticket only while its status is `WAITING`.
+
+### Workflow
+
+```text
+Customer
+   ↓
+Request Ticket Cancellation
+   ↓
+System Verifies the Ticket Belongs to the Customer
+   ├── No  → Reject Cancellation
+   │
+   └── Yes
+          ↓
+   System Checks Ticket Status
+          ↓
+   Is Status WAITING?
+      ├── Yes → Cancel Ticket
+      │             ↓
+      │        Update Queue
+      │
+      └── No  → Reject Cancellation
+```
+
+### Involved Actors
+
+- Customer
+
+---
+
+## 7. Call Next Customer
 
 ### Objective
 
@@ -195,10 +338,12 @@ Operator
 Request Next Customer
    ↓
 System Selects the Next Eligible Ticket
+   (the WAITING ticket with the earliest issue time)
    ↓
-Ticket Status is Updated
+System Updates Ticket Status to CALLED
    ↓
-Customer is Notified
+Customer is Notified in Real Time
+   (if not connected, current status is shown on reconnection)
 ```
 
 ### Involved Actors
@@ -208,7 +353,47 @@ Customer is Notified
 
 ---
 
-## 6. Complete Service
+## 8. Handle No-Show Customer
+
+### Objective
+
+Allow an operator to record a ticket as `NO_SHOW` if the customer has not appeared at the assigned counter after at least 60 seconds have elapsed since the ticket was called.
+
+### Workflow
+
+```text
+Operator Calls Customer
+   ↓
+Ticket Status is CALLED
+   ↓
+Wait at Least 60 Seconds
+   ↓
+Has the Customer Appeared?
+   ├── Yes → Continue Service Process
+   │
+   └── No → System Checks Ticket Status
+                  ↓
+           Is Status Still CALLED?
+              ├── Yes → Operator Confirms Absence and Records NO_SHOW
+              │              ↓
+              │       System Updates Ticket Status
+              │              ↓
+              │       Counter Becomes Available
+              │              ↓
+              │       Queue Continues
+              │
+              └── No → Reject No-Show Operation
+```
+
+A `NO_SHOW` ticket is final; the customer must obtain a new ticket to receive service. No Service Log is created for it.
+
+### Involved Actors
+
+- Operator
+
+---
+
+## 9. Complete Service
 
 ### Objective
 
@@ -219,11 +404,12 @@ Allow an operator to complete the current customer service and record the servic
 ```text
 Operator
    ↓
-Complete Customer Service
+Complete Customer Service (ticket in CALLED status)
    ↓
-Ticket Status is Updated
+System Updates Ticket Status to COMPLETED
    ↓
 Service Duration is Recorded
+   (from call time to completion time)
    ↓
 Service Log is Created
    ↓
@@ -236,23 +422,28 @@ Counter Becomes Available
 
 ---
 
-## 7. Manage Services
+## 10. Manage Branch Services
 
 ### Objective
 
-Allow a Branch Administrator to manage the services provided by their branch.
+Allow a Branch Administrator to manage the services provided by their branch by enabling catalog services and activating or deactivating them for the branch.
 
 ### Workflow
 
 ```text
 Branch Administrator
    ↓
-Select Service
+Select a Service from the Catalog
    ↓
-Create / Update / Deactivate Service
+Enable / Activate / Deactivate Branch Service
    ↓
-System Updates Service Information
+Activation of a Branch Service Deactivated by a Global Administrator
+as an Emergency Action?
+   ├── Yes → Reject (only a Global Administrator can reactivate it)
+   └── No  → System Updates Branch Service Information
 ```
+
+Deactivating a Branch Service blocks new tickets for it in that branch only; existing tickets continue through their normal lifecycle.
 
 ### Involved Actors
 
@@ -260,7 +451,7 @@ System Updates Service Information
 
 ---
 
-## 8. Manage Counters
+## 11. Manage Counters
 
 ### Objective
 
@@ -271,7 +462,17 @@ Allow a Branch Administrator to manage the specialized counters within their bra
 ```text
 Branch Administrator
    ↓
-Create / Update / Deactivate Counter
+Create / Activate / Deactivate Counter
+   ↓
+Activation of a Counter Deactivated by a Global Administrator
+as an Emergency Action?
+   ├── Yes → Reject (only a Global Administrator can reactivate it)
+   └── No  → (continue)
+   ↓
+Deactivating a Counter Handling a CALLED Ticket?
+   ├── Yes → Ticket Returns to WAITING
+   │          Customer is Notified
+   └── No  → (continue)
    ↓
 System Updates Counter Information
 ```
@@ -282,7 +483,7 @@ System Updates Counter Information
 
 ---
 
-## 9. Manage Operators
+## 12. Manage Operators
 
 ### Objective
 
@@ -293,9 +494,20 @@ Allow a Branch Administrator to manage operators assigned to their branch.
 ```text
 Branch Administrator
    ↓
-Register / Update / Deactivate Operator
+Register (with Temporary Password) / Update / Activate / Deactivate Operator
+   ↓
+Activation of an Operator Deactivated by a Global Administrator
+as an Emergency Action?
+   ├── Yes → Reject (only a Global Administrator can reactivate it)
+   └── No  → (continue)
+   ↓
+Deactivating an Operator Handling a CALLED Ticket?
+   ├── Yes → Ticket Returns to WAITING
+   │          Customer is Notified
+   └── No  → (continue)
    ↓
 Assign Operator to Counter
+   (ends the previous assignment; history is retained)
    ↓
 System Updates Operator Information
 ```
@@ -306,7 +518,7 @@ System Updates Operator Information
 
 ---
 
-## 10. Manage Branches
+## 13. Manage Branches
 
 ### Objective
 
@@ -318,11 +530,14 @@ Allow a Global Administrator to manage branches across the organization.
 Global Administrator
    ↓
 Create / Update Branch
+   (address, city, coordinates, time zone)
    ↓
 Activate / Deactivate Branch
    ↓
 System Updates Branch Information
 ```
+
+Deactivating a branch blocks new tickets only; existing tickets continue through their normal lifecycle.
 
 ### Involved Actors
 
@@ -330,7 +545,7 @@ System Updates Branch Information
 
 ---
 
-## 11. Manage Branch Administrators
+## 14. Manage Branch Administrators
 
 ### Objective
 
@@ -341,7 +556,7 @@ Allow a Global Administrator to create and manage Branch Administrators for indi
 ```text
 Global Administrator
    ↓
-Register / Update / Deactivate Branch Administrator
+Register (with Temporary Password) / Update / Activate / Deactivate Branch Administrator
    ↓
 Assign Branch Administrator to a Branch
    ↓
@@ -354,35 +569,7 @@ System Updates Administrator Information
 
 ---
 
-## 12. Estimate Waiting Time
-
-### Objective
-
-Provide an estimated waiting time for customers based on the current queue and recent service performance.
-
-### Workflow
-
-```text
-Customer
-   ↓
-Request Waiting Time
-   ↓
-System Retrieves Queue Information
-   ↓
-System Retrieves Recent Service Data
-   ↓
-Waiting Time is Calculated
-   ↓
-Estimated Wait Time is Displayed
-```
-
-### Involved Actors
-
-- Customer
-
----
-
-## 13. View Operational Statistics
+## 15. View Operational Statistics
 
 ### Objective
 
@@ -404,3 +591,89 @@ Operational Statistics are Displayed
 
 - Branch Administrator
 - Global Administrator
+
+---
+
+## 16. Oversee and Emergency-Deactivate Branch Resources
+
+### Objective
+
+Allow a Global Administrator to view the Branch Services, counters, and operators of any branch and to deactivate them in emergency situations.
+
+### Workflow
+
+```text
+Global Administrator
+   ↓
+View Branch Services / Counters / Operators of a Branch
+   ↓
+Emergency Situation?
+   ├── No  → (view only)
+   │
+   └── Yes → Deactivate Resource as an Emergency Action
+                  ↓
+           System Records Deactivation (type, user, time)
+                  ↓
+           Handling a CALLED Ticket?
+              ├── Yes → Ticket Returns to WAITING, Customer is Notified
+              └── No  → (continue)
+                  ↓
+           Only a Global Administrator Can Reactivate the Resource
+```
+
+### Involved Actors
+
+- Global Administrator
+
+---
+
+## 17. Manage Service Catalog
+
+### Objective
+
+Allow a Global Administrator to define and manage the services available across the organization.
+
+### Workflow
+
+```text
+Global Administrator
+   ↓
+Create / Update Service
+   ↓
+Activate / Deactivate Service
+   ↓
+System Updates the Service Catalog
+```
+
+Deactivating a catalog Service blocks new tickets for it in all branches; tickets already issued continue through their normal lifecycle.
+
+### Involved Actors
+
+- Global Administrator
+
+---
+
+## 18. View Ticket and Queue Status
+
+### Objective
+
+Allow a customer to view the current status of their own ticket and the latest relevant queue information.
+
+### Workflow
+
+```text
+Customer
+   ↓
+Request Ticket Status
+   ↓
+System Verifies the Ticket Belongs to the Customer
+   ├── No  → Reject Request
+   │
+   └── Yes → Display Current Status
+              (queue position and estimated waiting time while WAITING,
+               counter information while CALLED)
+```
+
+### Involved Actors
+
+- Customer

@@ -19,6 +19,8 @@ This document identifies the primary inputs and outputs of each system process f
 - Registration status
 - Validation or error information
 
+**Note:** Public registration creates only Customer accounts.
+
 ---
 
 ## 2. Authenticate User
@@ -31,8 +33,12 @@ This document identifies the primary inputs and outputs of each system process f
 ### Outputs
 
 - Authentication result
-- Authentication token / session
+- Authentication token or session
 - User identity and role information
+- Indicator that a password change is required (for accounts created with a temporary password)
+- Authentication error information, if applicable
+
+**Note:** While a password change is required, the only permitted operation is changing the password.
 
 ---
 
@@ -45,135 +51,213 @@ This document identifies the primary inputs and outputs of each system process f
 
 ### Outputs
 
-- Access granted
-- Access denied
+- Access decision: granted or denied
 - Authorization result
+- Error or denial information, if applicable
 
 ---
 
-## 4. Obtain Ticket
+## 4. Compare Eligible Branches
 
 ### Inputs
 
 - Customer identity
-- Branch
-- Service
+- Selected service (from the active service catalog)
+- Selected city (chosen from the list of cities that have active branches)
+- Customer geographical location (optional)
 
 ### Outputs
 
-- Ticket
-- Ticket number
-- Queue position
-- Ticket status
-- Estimated waiting time
+- List of eligible branches: active branches in the city that provide the selected service through an active Branch Service and have at least one active counter for it (an active counter is itself active and has an active operator assigned)
+- Estimated waiting time for the selected service at each eligible branch (or "unknown" if the queue has no service history)
+- Straight-line distance in kilometers to each eligible branch, if the customer's location is provided
+- Branch comparison results
+- Information indicating that no eligible branches were found, if applicable
+- Validation error, if the provided coordinates are invalid
 
 ---
 
-## 5. Call Next Customer
+## 5. Obtain Ticket
+
+### Inputs
+
+- Customer identity
+- Selected branch
+- Selected service
+- Ticket issuance request
+
+### Outputs
+
+- Issued ticket
+- Ticket number
+- Queue position
+- Initial ticket status (`WAITING`)
+- Estimated waiting time
+- Ticket issuance result or error information, if applicable
+
+**Validation conditions:** The request is rejected, with a clear reason, if the branch, the catalog Service, or the Branch Service is inactive, if the branch has no active counter for the service, or if the customer already has an active ticket (`WAITING` or `CALLED`).
+
+---
+
+## 6. Cancel Ticket
+
+### Inputs
+
+- Customer identity
+- Ticket identity
+- Ticket cancellation request
+
+### Outputs
+
+- Cancellation result
+- Updated ticket status (`CANCELLED`), if cancellation is successful
+- Updated queue information, if cancellation is successful
+- Rejection reason, if cancellation is not permitted
+
+**Cancellation conditions:** The ticket must belong to the requesting customer. The system shall permit cancellation only while the ticket status is `WAITING`. A cancellation request for a ticket that has already been called, or for a ticket belonging to another customer, shall be rejected.
+
+---
+
+## 7. Call Next Customer
 
 ### Inputs
 
 - Operator identity
 - Counter identity
+- Request to call the next customer
 
 ### Outputs
 
-- Selected ticket
-- Updated ticket status
-- Customer notification
-- Counter information
+- Selected ticket (the `WAITING` ticket with the earliest issue time in the queue)
+- Updated ticket status (`CALLED`) and call time
+- Customer notification (real time if connected; otherwise the current status is shown after reconnection)
+- Current counter information
+- Operation result or error information, if applicable
 
 ---
 
-## 6. Complete Service
+## 8. Handle No-Show Customer
 
 ### Inputs
 
 - Operator identity
-- Current ticket
+- Ticket identity
+- Request to record a No-Show
+- Operator confirmation that the customer has not appeared
+
+### Outputs
+
+- No-Show operation result
+- Updated ticket status (`NO_SHOW`), if the operation is successful
+- Updated queue information, if the operation is successful
+- Counter availability information, if the operation is successful (the counter becomes available for the next customer)
+
+**Validation conditions:** The system shall accept the No-Show request only if at least 60 seconds have elapsed since the ticket was called and the ticket remains in the `CALLED` status. The operator must confirm that the customer has not appeared. A `NO_SHOW` ticket is final; the customer must obtain a new ticket to receive service. No Service Log is created for a No-Show ticket.
+
+---
+
+## 9. Complete Service
+
+### Inputs
+
+- Operator identity
+- Current ticket identity (the ticket must be in `CALLED` status)
 - Service completion information
 
 ### Outputs
 
-- Updated ticket status
+- Updated ticket status (`COMPLETED`)
 - Service completion time
-- Service duration
-- Service log
+- Service duration (from the call time to the completion time)
+- Service Log record
+- Counter availability information
+- Operation result or error information, if applicable
 
 ---
 
-## 7. Manage Services
+## 10. Manage Branch Services
 
 ### Inputs
 
-- Branch administrator identity
+- Branch Administrator identity
 - Branch identity
-- Service information
-- Requested operation
+- Catalog Service to enable for the branch
+- Requested operation (enable, activate, or deactivate a Branch Service)
 
 ### Outputs
 
-- Updated service information
-- Operation status
+- Updated Branch Service information
+- Branch Service activation status, where applicable
+- Rejection reason, if reactivation is requested for a Branch Service that a Global Administrator deactivated as an emergency action
+- Operation result or error information
 
 ---
 
-## 8. Manage Counters
+## 11. Manage Counters
 
 ### Inputs
 
-- Branch administrator identity
+- Branch Administrator identity
 - Branch identity
-- Counter information
+- Counter information (including its designated Branch Service)
 - Requested operation
 
 ### Outputs
 
 - Updated counter information
-- Operation status
+- Counter activation status, where applicable
+- Ticket returned to `WAITING` and customer notified, if a counter handling a `CALLED` ticket is deactivated (no Service Log is created for the interrupted service)
+- Rejection reason, if the counter was deactivated as an emergency action by a Global Administrator and reactivation is requested by a Branch Administrator
+- Operation result or error information
 
 ---
 
-## 9. Manage Operators
+## 12. Manage Operators
 
 ### Inputs
 
-- Branch administrator identity
+- Branch Administrator identity
 - Branch identity
 - Operator information
-- Counter assignment
+- Temporary password (when registering an operator)
+- Counter assignment, where applicable
 - Requested operation
 
 ### Outputs
 
 - Updated operator information
-- Operator assignment information
-- Operation status
+- Operator assignment information, where applicable (a new assignment ends the previous assignment, and the assignment history is retained)
+- Operator activation status, where applicable
+- Temporary password, shown once to the creator
+- Ticket returned to `WAITING` and customer notified, if an operator handling a `CALLED` ticket is deactivated (no Service Log is created for the interrupted service)
+- Rejection reason, if the operator was deactivated as an emergency action by a Global Administrator and reactivation is requested by a Branch Administrator
+- Operation result or error information, if applicable
 
 ---
 
-## 10. Manage Branches
+## 13. Manage Branches
 
 ### Inputs
 
-- Global administrator identity
-- Branch information
+- Global Administrator identity
+- Branch information (address, city, geographical coordinates, time zone)
 - Requested operation
 
 ### Outputs
 
 - Updated branch information
-- Branch activation or deactivation status
-- Operation status
+- Branch activation or deactivation status, where applicable
+- Operation result or error information
 
 ---
 
-## 11. Manage Branch Administrators
+## 14. Manage Branch Administrators
 
 ### Inputs
 
-- Global administrator identity
-- Branch administrator information
+- Global Administrator identity
+- Branch Administrator information
+- Temporary password (when registering a Branch Administrator)
 - Branch assignment
 - Requested operation
 
@@ -181,25 +265,13 @@ This document identifies the primary inputs and outputs of each system process f
 
 - Updated Branch Administrator information
 - Branch assignment information
-- Operation status
+- Administrator activation status, where applicable
+- Temporary password, shown once to the creator
+- Operation result or error information
 
 ---
 
-## 12. Estimate Waiting Time
-
-### Inputs
-
-- Customer identity
-- Branch
-- Service
-
-### Outputs
-
-- Estimated waiting time
-
----
-
-## 13. View Operational Statistics
+## 15. View Operational Statistics
 
 ### Inputs
 
@@ -214,3 +286,58 @@ This document identifies the primary inputs and outputs of each system process f
 - Average waiting time
 - Queue statistics
 - Service performance statistics
+- Statistical results within the administrator's authorized scope
+
+---
+
+## 16. Oversee and Emergency-Deactivate Branch Resources
+
+### Inputs
+
+- Global Administrator identity
+- Branch identity
+- Resource identity (Branch Service, counter, or operator)
+- Requested operation (view, emergency deactivation, or reactivation of a resource deactivated as an emergency action)
+
+### Outputs
+
+- Branch Services, counters, and operators of the requested branch or all branches
+- Updated resource status
+- Record of the deactivation (type, user, and time)
+- Ticket returned to `WAITING` and customer notified, if a counter or operator handling a `CALLED` ticket is deactivated (no Service Log is created for the interrupted service)
+- Operation result or error information
+
+---
+
+## 17. Manage Service Catalog
+
+### Inputs
+
+- Global Administrator identity
+- Service information (name and description)
+- Requested operation (create, update, activate, or deactivate a catalog Service)
+
+### Outputs
+
+- Updated catalog Service information
+- Service activation status, where applicable
+- Operation result or error information
+
+**Note:** Deactivating a catalog Service blocks new tickets for it in all branches; tickets already issued continue through their normal lifecycle.
+
+---
+
+## 18. View Ticket and Queue Status
+
+### Inputs
+
+- Customer identity
+- Ticket identity (or request for the customer's current active ticket)
+
+### Outputs
+
+- Current ticket status
+- Queue position and estimated waiting time, while the ticket is `WAITING`
+- Counter information, when the ticket is `CALLED`
+- Rejection reason, if the ticket belongs to another customer
+- Operation result or error information, if applicable
