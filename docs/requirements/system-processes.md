@@ -8,7 +8,7 @@ Services are defined once in an organization-wide **service catalog** managed by
 
 Operators manage customers through their assigned counters. They call customers in first-in, first-out order, provide services, complete service interactions, and handle cases where a customer does not appear when called. An operator may record a ticket as `NO_SHOW` only after at least 60 seconds have elapsed since the customer was called, provided that the operator confirms the customer has not appeared and the ticket remains in the `CALLED` status.
 
-Administrators manage system resources and monitor operations according to their access scope. Global Administrators can additionally view and emergency-deactivate the Branch Services, counters, and operators of any branch.
+Administrators manage system resources and monitor operations according to their access scope. Global Administrators can additionally view (without changing) the Branch Services, counters, and operators of any branch.
 
 The system also provides user registration, authentication, and authorization to ensure secure access to system resources and operations.
 
@@ -115,7 +115,7 @@ Global Administrator
    ├── Manage Branches
    ├── Manage Service Catalog
    ├── Manage Branch Administrators
-   └── View and Emergency-Deactivate Branch Resources
+   └── View Branch Resources (read-only)
               ↓
        Branch Administrator
           ├── Manage Branch Services (enable / activate / deactivate)
@@ -437,10 +437,7 @@ Select a Service from the Catalog
    ↓
 Enable / Activate / Deactivate Branch Service
    ↓
-Activation of a Branch Service Deactivated by a Global Administrator
-as an Emergency Action?
-   ├── Yes → Reject (only a Global Administrator can reactivate it)
-   └── No  → System Updates Branch Service Information
+System Updates Branch Service Information
 ```
 
 Deactivating a Branch Service blocks new tickets for it in that branch only; existing tickets continue through their normal lifecycle.
@@ -463,11 +460,6 @@ Allow a Branch Administrator to manage the specialized counters within their bra
 Branch Administrator
    ↓
 Create / Activate / Deactivate Counter
-   ↓
-Activation of a Counter Deactivated by a Global Administrator
-as an Emergency Action?
-   ├── Yes → Reject (only a Global Administrator can reactivate it)
-   └── No  → (continue)
    ↓
 Deactivating a Counter Handling a CALLED Ticket?
    ├── Yes → Ticket Returns to WAITING
@@ -495,11 +487,6 @@ Allow a Branch Administrator to manage operators assigned to their branch.
 Branch Administrator
    ↓
 Register (with Temporary Password) / Update / Activate / Deactivate Operator
-   ↓
-Activation of an Operator Deactivated by a Global Administrator
-as an Emergency Action?
-   ├── Yes → Reject (only a Global Administrator can reactivate it)
-   └── No  → (continue)
    ↓
 Deactivating an Operator Handling a CALLED Ticket?
    ├── Yes → Ticket Returns to WAITING
@@ -594,32 +581,25 @@ Operational Statistics are Displayed
 
 ---
 
-## 16. Oversee and Emergency-Deactivate Branch Resources
+## 16. View Branch Resources
 
 ### Objective
 
-Allow a Global Administrator to view the Branch Services, counters, and operators of any branch and to deactivate them in emergency situations.
+Allow a Global Administrator to view the Branch Services, counters, and operators of any branch without changing them.
 
 ### Workflow
 
 ```text
 Global Administrator
    ↓
-View Branch Services / Counters / Operators of a Branch
+Select a Branch (or All Branches)
    ↓
-Emergency Situation?
-   ├── No  → (view only)
-   │
-   └── Yes → Deactivate Resource as an Emergency Action
-                  ↓
-           System Records Deactivation (type, user, time)
-                  ↓
-           Handling a CALLED Ticket?
-              ├── Yes → Ticket Returns to WAITING, Customer is Notified
-              └── No  → (continue)
-                  ↓
-           Only a Global Administrator Can Reactivate the Resource
+System Retrieves Branch Services / Counters / Operators
+   ↓
+Resources and Their Status are Displayed (read-only)
 ```
+
+Creating, activating, and deactivating these resources is the responsibility of the branch's Branch Administrator.
 
 ### Involved Actors
 

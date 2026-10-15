@@ -51,7 +51,7 @@ The Branch Administrator interacts with the system to:
 - Monitor queue activity and branch operations.
 - Access branch-level statistics and operational information.
 
-The Branch Administrator is restricted to the resources and operations of the assigned branch. A Branch Administrator can reactivate a deactivated Branch Service, counter, or operator, except one that a Global Administrator has deactivated as an emergency action. A Branch Administrator cannot create or modify catalog services.
+The Branch Administrator is restricted to the resources and operations of the assigned branch. Only the Branch Administrator can activate or deactivate the branch's Branch Services, counters, and operators. A Branch Administrator cannot create or modify catalog services.
 
 ---
 
@@ -65,21 +65,19 @@ The Global Administrator interacts with the system to:
 - Activate or deactivate branches.
 - Create and manage the service catalog (create, update, activate, and deactivate services).
 - Register Branch Administrators (with a temporary password) and manage them.
-- View the Branch Services, counters, and operators of all branches.
-- Deactivate a Branch Service, counter, or operator in any branch as an emergency action, and reactivate resources deactivated this way.
-- Manage organization-wide resources and configurations.
+- View (without changing) the Branch Services, counters, and operators of all branches.
 - Monitor queues and operations across branches.
 - Access system-wide statistics and performance information.
 
-The Global Administrator has access to the entire organization rather than being restricted to a single branch. Enabling services for a branch, creating counters, and registering operators remain the responsibility of Branch Administrators. The first Global Administrator account is provided when the system is first set up.
+The Global Administrator has access to the entire organization rather than being restricted to a single branch. Enabling services for a branch, creating counters, registering operators, and activating or deactivating these resources are the sole responsibility of Branch Administrators. The first Global Administrator account is provided when the system is first set up.
 
 ---
 
 ## Actor Overview
 
-| Actor                    | Scope               | Primary Interaction                                                                                         |
-| ------------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Customer**             | Personal            | Compare branches, obtain and track a single active ticket, and cancel waiting tickets                       |
-| **Operator**             | Counter / Service   | Manage queues, serve customers, and record No-Shows                                                         |
-| **Branch Administrator** | Single Branch       | Manage branch services, counters, and operators                                                             |
-| **Global Administrator** | Entire Organization | Manage branches, the service catalog, and Branch Administrators; view all resources; emergency deactivation |
+| Actor                    | Scope               | Primary Interaction                                                                                |
+| ------------------------ | ------------------- | -------------------------------------------------------------------------------------------------- |
+| **Customer**             | Personal            | Compare branches, obtain and track a single active ticket, and cancel waiting tickets              |
+| **Operator**             | Counter / Service   | Manage queues, serve customers, and record No-Shows                                                |
+| **Branch Administrator** | Single Branch       | Manage branch services, counters, and operators                                                    |
+| **Global Administrator** | Entire Organization | Manage branches, the service catalog, and Branch Administrators; view branch resources (read-only) |

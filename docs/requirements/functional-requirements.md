@@ -108,7 +108,7 @@ This document defines the functional requirements of the Distributed Real-Time Q
 
 **FR-34** — The system shall allow a Branch Administrator to enable a catalog Service for their branch, creating the corresponding Branch Service.
 
-**FR-35** — The system shall allow a Branch Administrator to activate a Branch Service within their branch, unless it was deactivated as an emergency action by a Global Administrator (see FR-67).
+**FR-35** — The system shall allow a Branch Administrator to activate a Branch Service within their branch.
 
 **FR-36** — The system shall allow a Branch Administrator to deactivate a Branch Service within their branch.
 
@@ -124,7 +124,7 @@ This document defines the functional requirements of the Distributed Real-Time Q
 
 **FR-38** — The system shall allow a Branch Administrator to create a counter within their branch.
 
-**FR-39** — The system shall allow a Branch Administrator to activate a counter within their branch, unless it was deactivated as an emergency action by a Global Administrator (see FR-67).
+**FR-39** — The system shall allow a Branch Administrator to activate a counter within their branch.
 
 **FR-40** — The system shall allow a Branch Administrator to deactivate a counter within their branch.
 
@@ -138,7 +138,7 @@ This document defines the functional requirements of the Distributed Real-Time Q
 
 **FR-43** — The system shall allow a Branch Administrator to update an operator's information.
 
-**FR-44** — The system shall allow a Branch Administrator to activate an operator, unless the operator was deactivated as an emergency action by a Global Administrator (see FR-67).
+**FR-44** — The system shall allow a Branch Administrator to activate an operator.
 
 **FR-45** — The system shall allow a Branch Administrator to deactivate an operator.
 
@@ -202,8 +202,8 @@ This document defines the functional requirements of the Distributed Real-Time Q
 
 ---
 
-## 14. Global Administrator Oversight of Branch Resources
+## 14. Global Administrator Access to Branch Resources
 
-**FR-66** — The system shall allow a Global Administrator to view the Branch Services, counters and operators of all branches.
+**FR-66** — The system shall allow a Global Administrator to view (without changing) the Branch Services, counters and operators of all branches.
 
-**FR-67** — The system shall allow a Global Administrator to deactivate a Branch Service, counter or operator in any branch as an emergency action. The system shall record the type of deactivation (regular or emergency), the user who performed it, and the time. A resource deactivated as an emergency action shall be reactivated only by a Global Administrator, and a reactivation attempt by a Branch Administrator shall be rejected.
+**FR-67** — The system shall restrict the creation, activation and deactivation of Branch Services, counters and operators to the Branch Administrator of the owning branch, and shall reject such operations when attempted by a Global Administrator.

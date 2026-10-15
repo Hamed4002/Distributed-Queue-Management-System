@@ -188,7 +188,6 @@ This document identifies the primary inputs and outputs of each system process f
 
 - Updated Branch Service information
 - Branch Service activation status, where applicable
-- Rejection reason, if reactivation is requested for a Branch Service that a Global Administrator deactivated as an emergency action
 - Operation result or error information
 
 ---
@@ -207,7 +206,6 @@ This document identifies the primary inputs and outputs of each system process f
 - Updated counter information
 - Counter activation status, where applicable
 - Ticket returned to `WAITING` and customer notified, if a counter handling a `CALLED` ticket is deactivated (no Service Log is created for the interrupted service)
-- Rejection reason, if the counter was deactivated as an emergency action by a Global Administrator and reactivation is requested by a Branch Administrator
 - Operation result or error information
 
 ---
@@ -230,7 +228,6 @@ This document identifies the primary inputs and outputs of each system process f
 - Operator activation status, where applicable
 - Temporary password, shown once to the creator
 - Ticket returned to `WAITING` and customer notified, if an operator handling a `CALLED` ticket is deactivated (no Service Log is created for the interrupted service)
-- Rejection reason, if the operator was deactivated as an emergency action by a Global Administrator and reactivation is requested by a Branch Administrator
 - Operation result or error information, if applicable
 
 ---
@@ -290,22 +287,20 @@ This document identifies the primary inputs and outputs of each system process f
 
 ---
 
-## 16. Oversee and Emergency-Deactivate Branch Resources
+## 16. View Branch Resources
 
 ### Inputs
 
 - Global Administrator identity
-- Branch identity
-- Resource identity (Branch Service, counter, or operator)
-- Requested operation (view, emergency deactivation, or reactivation of a resource deactivated as an emergency action)
+- Branch identity (or all branches)
+- Resource type (Branch Services, counters, or operators)
 
 ### Outputs
 
-- Branch Services, counters, and operators of the requested branch or all branches
-- Updated resource status
-- Record of the deactivation (type, user, and time)
-- Ticket returned to `WAITING` and customer notified, if a counter or operator handling a `CALLED` ticket is deactivated (no Service Log is created for the interrupted service)
+- Branch Services, counters, and operators of the requested branch or all branches, with their status
 - Operation result or error information
+
+**Note:** This process is read-only. Global Administrators cannot create, activate, or deactivate these resources.
 
 ---
 

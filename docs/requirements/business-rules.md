@@ -127,7 +127,7 @@ This document defines the business rules and domain constraints that govern the 
 
 **BR-38** — A Branch Administrator can manage only resources belonging to their assigned branch.
 
-**BR-39** — A Global Administrator can manage branches and the service catalog across the organization. For the Branch Services, counters and operators of any branch, a Global Administrator can only view them and deactivate them in emergency situations; enabling services for a branch, creating counters and registering operators remain the responsibility of the Branch Administrator.
+**BR-39** — A Global Administrator can manage branches (including activating and deactivating them) and the service catalog across the organization. For the Branch Services, counters and operators of any branch, a Global Administrator has view-only access.
 
 **BR-40** — A Global Administrator can create and manage Branch Administrators.
 
@@ -137,7 +137,7 @@ This document defines the business rules and domain constraints that govern the 
 
 **BR-43** — A Branch Administrator can manage the services provided by their assigned branch by enabling catalog Services for the branch and activating or deactivating the corresponding Branch Services. A Branch Administrator cannot create or modify catalog Services.
 
-**BR-62** — A Branch Administrator may activate a deactivated Branch Service, counter or operator unless it was deactivated as an emergency action by a Global Administrator. A resource deactivated as an emergency action may be reactivated only by a Global Administrator.
+**BR-62** — Branch Services, counters and operators can be created, activated and deactivated only by the Branch Administrator of the branch to which they belong. A Global Administrator cannot create, activate or deactivate them.
 
 **BR-64** — Catalog Services are created, updated, activated and deactivated only by Global Administrators.
 
