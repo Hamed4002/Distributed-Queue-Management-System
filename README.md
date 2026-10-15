@@ -143,13 +143,13 @@ The Branch Administrator is responsible for:
 - Monitoring branch-level operational statistics.
 - Managing branch-specific configuration and operational data.
 
-A Branch Administrator must only have access to resources and operations belonging to their assigned branch. A Branch Administrator can reactivate a deactivated Branch Service, counter, or operator, except one that a Global Administrator has deactivated as an emergency action. A Branch Administrator cannot create or modify catalog services.
+A Branch Administrator must only have access to resources and operations belonging to their assigned branch. Only the Branch Administrator can activate or deactivate the branch's Branch Services, counters, and operators. A Branch Administrator cannot create or modify catalog services.
 
 ---
 
 ### 3.2 Global Administrator
 
-A Global Administrator has system-wide access and is responsible for managing and monitoring **all branches** within the organization.
+A Global Administrator manages branches, the organization-wide service catalog, and Branch Administrator accounts. The Global Administrator has read-only access to Branch Services, counters, and operators across all branches.
 
 The Global Administrator is responsible for:
 
@@ -158,12 +158,11 @@ The Global Administrator is responsible for:
 - Managing branches across the organization.
 - Creating and managing the **service catalog** (creating, updating, activating, and deactivating Services).
 - Registering and managing **Branch Administrators** (with temporary passwords).
-- Viewing the Branch Services, counters, and operators of any branch, and deactivating them in emergency situations. Resources deactivated this way can be reactivated only by a Global Administrator.
+- Viewing (without changing) the Branch Services, counters, and operators of any branch.
 - Monitoring queues across all branches.
 - Accessing system-wide statistics and performance information.
-- Managing organization-wide configurations and operational data.
 
-A Global Administrator has a broader access scope than a Branch Administrator and can operate across the entire system. Enabling services for a branch, creating counters, and registering operators remain the responsibility of Branch Administrators. The first Global Administrator account is provided when the system is first set up.
+A Global Administrator has a broader access scope than a Branch Administrator and can operate across the entire system. Enabling services for a branch, creating counters, registering operators, and activating or deactivating these resources are the sole responsibility of Branch Administrators. The first Global Administrator account is provided when the system is first set up.
 
 ---
 
@@ -197,7 +196,7 @@ The exact permissions, access rules, resource ownership, and authorization polic
 - **Branch-Scoped Real-Time Communication** — Isolate real-time communication between branches.
 - **Service Logging** — Record completed services and service durations.
 - **Waiting Time Estimation** — Estimate customer waiting time based on queue and recent service performance.
-- **Administrative Management** — Support branch-level and global administration, including emergency deactivation by Global Administrators.
+- **Administrative Management** — Support branch-level and global administration with clearly separated responsibilities.
 - **Account Provisioning** — Create staff accounts with temporary passwords that must be changed at first login.
 - **Statistics & Reporting** — Provide queue, traffic, and waiting-time statistics.
 
