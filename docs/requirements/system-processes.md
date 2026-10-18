@@ -66,7 +66,8 @@ Obtain Ticket (rejected if the customer already has an active ticket)
    ↓
 Join Queue
    ↓
-Wait (customer can view own ticket status at any time)
+Wait (status changes arrive in real time; the current status is
+   loaded when the customer opens the app or reconnects)
    ├── Cancel Ticket
    │      └── Allowed only for own ticket while status is WAITING
    │
@@ -349,7 +350,6 @@ Customer is Notified in Real Time
 ### Involved Actors
 
 - Operator
-- Customer
 
 ---
 
@@ -630,30 +630,3 @@ Deactivating a catalog Service blocks new tickets for it in all branches; ticket
 ### Involved Actors
 
 - Global Administrator
-
----
-
-## 18. View Ticket and Queue Status
-
-### Objective
-
-Allow a customer to view the current status of their own ticket and the latest relevant queue information.
-
-### Workflow
-
-```text
-Customer
-   ↓
-Request Ticket Status
-   ↓
-System Verifies the Ticket Belongs to the Customer
-   ├── No  → Reject Request
-   │
-   └── Yes → Display Current Status
-              (queue position and estimated waiting time while WAITING,
-               counter information while CALLED)
-```
-
-### Involved Actors
-
-- Customer

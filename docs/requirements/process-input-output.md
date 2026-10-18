@@ -319,20 +319,3 @@ This document identifies the primary inputs and outputs of each system process f
 - Operation result or error information
 
 **Note:** Deactivating a catalog Service blocks new tickets for it in all branches; tickets already issued continue through their normal lifecycle.
-
----
-
-## 18. View Ticket and Queue Status
-
-### Inputs
-
-- Customer identity
-- Ticket identity (or request for the customer's current active ticket)
-
-### Outputs
-
-- Current ticket status
-- Queue position and estimated waiting time, while the ticket is `WAITING`
-- Counter information, when the ticket is `CALLED`
-- Rejection reason, if the ticket belongs to another customer
-- Operation result or error information, if applicable
