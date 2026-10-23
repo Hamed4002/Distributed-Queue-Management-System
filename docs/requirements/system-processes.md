@@ -52,7 +52,11 @@ Customer
    ↓
 Select Service
    ↓
-Select City
+System Checks the Customer Has No Active Ticket
+   ├── Has Active Ticket → Inform the Customer, Stop
+   └── No Active Ticket
+          ↓
+   Select City
    ↓
 Provide Location (Optional)
    ↓
@@ -230,22 +234,27 @@ Customer
    ↓
 Select Service (from the active service catalog)
    ↓
-Select City (from the list of cities with active branches)
-   ↓
-Provide Location (Optional)
-   ↓
-System Identifies Eligible Branches
+System Checks the Customer Has No Active Ticket
+   ├── Has Active Ticket → Inform the Customer, Stop
+   │
+   └── No Active Ticket
+          ↓
+   Select City (from the list of cities with active branches)
+          ↓
+   Provide Location (Optional)
+          ↓
+   System Identifies Eligible Branches
    (active, in the city, provides the service through an active
     Branch Service, has at least one active counter for it)
-   ↓
-System Calculates Estimated Waiting Time
+          ↓
+   System Calculates Estimated Waiting Time
    (may be "unknown" if the queue has no service history)
-   ↓
-Location Provided?
-   ├── Yes → Calculate Distance (straight line, km)
-   └── No  → Skip Distance Calculation
-                  ↓
-        Display Branch Comparison
+          ↓
+   Location Provided?
+      ├── Yes → Calculate Distance (straight line, km)
+      └── No  → Skip Distance Calculation
+                     ↓
+           Display Branch Comparison
 ```
 
 An active counter is a counter that is itself active and has an active operator assigned to it.

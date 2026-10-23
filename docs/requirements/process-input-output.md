@@ -74,6 +74,7 @@ This document identifies the primary inputs and outputs of each system process f
 - Branch comparison results
 - Information indicating that no eligible branches were found, if applicable
 - Validation error, if the provided coordinates are invalid
+- Rejection reason, if the customer already has an active ticket (WAITING or CALLED)
 
 ---
 

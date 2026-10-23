@@ -15,7 +15,7 @@ The Customer interacts with the system to:
 - Select a required service from the service catalog.
 - Select a city from the cities that have active branches.
 - Optionally provide their geographical location.
-- Compare eligible branches based on estimated waiting times and, when their location is provided, distance.
+- Compare eligible branches based on estimated waiting times and, when their location is provided, distance.(available only when the customer has no active ticket)
 - Select an eligible branch.
 - Obtain a ticket and join the corresponding service queue. A customer may hold only one active ticket (`WAITING` or `CALLED`) at a time.
 - View the status of their own ticket and the latest relevant queue information.
