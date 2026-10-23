@@ -65,7 +65,7 @@ This document defines the business rules and domain constraints that govern the 
 
 **BR-20** — A cancelled ticket cannot be called or served.
 
-**BR-21** — A customer may hold at most one active ticket (status `WAITING` or `CALLED`) in the entire system at any time. A ticket request made while the customer already has an active ticket is rejected, including when such requests arrive concurrently. After the ticket reaches `COMPLETED`, `CANCELLED` or `NO_SHOW`, the customer may obtain a new ticket. The system also checks this condition before the customer selects a city and compares branches: a customer who already has an active ticket cannot compare branches or request a new ticket until the active ticket reaches a final status. The check is repeated at ticket issuance.
+**BR-21** — A customer may hold at most one active ticket (status `WAITING` or `CALLED`) in the entire system at any time. A ticket request made while the customer already has an active ticket is rejected, including when such requests arrive concurrently. After the ticket reaches `COMPLETED`, `CANCELLED` or `NO_SHOW`, the customer may obtain a new ticket. The system also checks this condition before the customer selects a service: a customer who already has an active ticket cannot compare branches or request a new ticket until the active ticket reaches a final status. The check is repeated at ticket issuance.
 
 **BR-22** — Tickets in each queue (branch + service) are called in FIFO order: the `WAITING` ticket with the earliest issue time is called first. If issue times are equal, the smaller ticket number is called first.
 

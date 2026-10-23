@@ -50,67 +50,67 @@ Use System According to Role
 ```text
 Customer
    ↓
-Select Service
-   ↓
 System Checks the Customer Has No Active Ticket
    ├── Has Active Ticket → Inform the Customer, Stop
    └── No Active Ticket
-          ↓
-   Select City
-   ↓
-Provide Location (Optional)
-   ↓
-Compare Eligible Branches
-   ├── Estimated Waiting Time
-   └── Distance (if Location is provided)
-   ↓
-Select Branch
-   ↓
-Obtain Ticket (rejected if the customer already has an active ticket)
-   ↓
-Join Queue
-   ↓
-Wait (status changes arrive in real time; the current status is
-   loaded when the customer opens the app or reconnects)
-   ├── Cancel Ticket
-   │      └── Allowed only for own ticket while status is WAITING
-   │
-   └── Operator Calls Next Customer (oldest WAITING ticket)
-              ↓
-       Ticket Status → CALLED
-              ↓
-       Customer is Notified
-       (if not connected, status is shown on reconnection)
-              ↓
-       Counter or Operator Deactivated?
-          ├── Yes → Ticket Returns to WAITING
-          │          (customer notified, another counter takes over)
-          │
-          └── No
-                 ↓
-       Customer Arrives?
-          ├── Yes → Service is Provided
-          │          ↓
-          │     Service is Completed
-          │          ↓
-          │     Service Log is Recorded
-          │          ↓
-          │     Counter Becomes Available
-          │
-          └── No → Wait Until 60 Seconds Have Elapsed
-                         ↓
-                  Customer Still Absent?
-                         ↓
-                  Is Ticket Still CALLED?
-                    ├── Yes → Operator Confirms and Records NO_SHOW
-                    │              ↓
-                    │       Ticket Status is Updated
-                    │              ↓
-                    │       Counter Becomes Available
-                    │              ↓
-                    │       Queue Continues
-                    │
-                    └── No → Reject No-Show Operation
+         ↓
+      Select Service
+         ↓
+      Select City
+         ↓
+      Provide Location (Optional)
+         ↓
+      Compare Eligible Branches
+         ├── Estimated Waiting Time
+         └── Distance (if Location is provided)
+               ↓
+            Select Branch
+               ↓
+      Obtain Ticket (rejected if the customer already has an active ticket)
+               ↓
+            Join Queue
+               ↓
+            Wait (status changes arrive in real time; the current status is
+                  loaded when the customer opens the app or reconnects)
+               ├── Cancel Ticket
+               │      └── Allowed only for own ticket while status is WAITING
+               │
+               └── Operator Calls Next Customer (oldest WAITING ticket)
+                        ↓
+                  Ticket Status → CALLED
+                        ↓
+                  Customer is Notified
+                  (if not connected, status is shown on reconnection)
+                        ↓
+                  Counter or Operator Deactivated?
+                     ├── Yes → Ticket Returns to WAITING
+                     │          (customer notified, another counter takes over)
+                     │
+                     └── No
+                            ↓
+                     Customer Arrives?
+                        ├── Yes → Service is Provided
+                        │          ↓
+                        │     Service is Completed
+                        │          ↓
+                        │     Service Log is Recorded
+                        │          ↓
+                        │     Counter Becomes Available
+                        │
+                        └── No → Wait Until 60 Seconds Have Elapsed
+                                       ↓
+                                Customer Still Absent?
+                                       ↓
+                                Is Ticket Still CALLED?
+                                  ├── Yes → Operator Confirms and Records NO_SHOW
+                                  │              ↓
+                                  │       Ticket Status is Updated
+                                  │              ↓
+                                  │       Counter Becomes Available
+                                  │              ↓
+                                  │       Queue Continues
+                                  │
+                                  └── No → Reject No-Show Operation
 ```
 
 Administrative operations run alongside the queue process:
@@ -232,12 +232,12 @@ Allow a customer to compare eligible branches that provide the selected service 
 ```text
 Customer
    ↓
-Select Service (from the active service catalog)
-   ↓
 System Checks the Customer Has No Active Ticket
    ├── Has Active Ticket → Inform the Customer, Stop
    │
    └── No Active Ticket
+          ↓
+   Select Service (from the active service catalog)
           ↓
    Select City (from the list of cities with active branches)
           ↓

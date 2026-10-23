@@ -22,7 +22,7 @@ This document defines the functional requirements of the Distributed Real-Time Q
 
 ## 2. Branch Comparison and Selection
 
-**FR-07** — The system shall allow customers to select a service and a city before selecting a branch. The service shall be chosen from the active catalog Services, and the city from the list provided by FR-14.If the customer already has an active ticket (WAITING or CALLED), the system shall inform the customer and shall not allow the selection of a city and the comparison of branches to proceed.
+**FR-07** — The system shall allow customers to select a service and a city before selecting a branch. The service shall be chosen from the active catalog Services, and the city from the list provided by FR-14.If the customer already has an active ticket (WAITING or CALLED), the system shall inform the customer and shall not allow the customer to proceed with selecting a service.
 
 **FR-08** — The system shall allow customers to optionally provide their geographical location.
 
