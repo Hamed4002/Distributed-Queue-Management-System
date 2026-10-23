@@ -100,7 +100,7 @@ The customer's workflow is:
 4. View eligible branches along with estimated waiting times.
 5. If a location is provided, view the distance to each eligible branch.
 6. Select a **Branch**.
-7. Receive a **Ticket** and join the corresponding queue. A customer may hold only one active ticket at a time.
+7. Receive a **Ticket** and join the corresponding queue. A customer may hold only one active ticket at a time.A customer who already has an active ticket cannot compare branches or request a new ticket.
 8. View the status of their own ticket and, optionally, cancel it while its status is `WAITING`.
 9. Receive a **real-time notification** when the ticket is called. If the customer is not connected at that moment, the current ticket status is shown after reconnecting.
 10. Proceed to the assigned counter and receive the requested service.
