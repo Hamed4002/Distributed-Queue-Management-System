@@ -52,7 +52,7 @@ This document defines the functional requirements of the Distributed Real-Time Q
 
 **FR-19** — The system shall provide the customer with ticket information after successful ticket issuance.
 
-**FR-20** — The system shall maintain the current state of each ticket throughout its lifecycle (`WAITING`, `CALLED`, `COMPLETED`, `CANCELLED`, `NO_SHOW`) and shall allow only the transitions defined in BR-17.
+**FR-20** — The system shall maintain the current state of each ticket throughout its lifecycle (`WAITING`, `CALLED`, `COMPLETED`, `CANCELLED`, `NO_SHOW`), shall allow only the transitions defined in BR-17, and shall record every status change in the ticket's status history.
 
 **FR-21** — The system shall allow customers to cancel their own tickets only while their status is `WAITING` and shall reject cancellation requests after a ticket has been called or when the ticket belongs to another customer.
 
