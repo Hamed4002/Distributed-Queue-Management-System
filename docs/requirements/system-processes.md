@@ -559,6 +559,8 @@ Assign Branch Administrator to a Branch
 System Updates Administrator Information
 ```
 
+Deactivating a Branch Administrator also ends their current branch assignment. A branch has at most one active Branch Administrator at any time.
+
 ### Involved Actors
 
 - Global Administrator

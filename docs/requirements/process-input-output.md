@@ -264,7 +264,7 @@ This document identifies the primary inputs and outputs of each system process f
 ### Outputs
 
 - Updated Branch Administrator information
-- Branch assignment information
+- Branch assignment information (a new assignment ends the previous one and the history is retained; deactivating the administrator ends the current assignment)
 - Administrator activation status, where applicable
 - Temporary password, shown once to the creator
 - Operation result or error information

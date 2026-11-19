@@ -123,7 +123,7 @@ This document defines the business rules and domain constraints that govern the 
 
 ## 7. Administrative Rules
 
-**BR-42** — A Branch Administrator is assigned to a specific branch.
+**BR-42** — A Branch Administrator is assigned to at most one branch at any time, and each branch has at most one active Branch Administrator at any time. The history of assignments is retained.
 
 **BR-43** — A Branch Administrator can manage only resources belonging to their assigned branch.
 

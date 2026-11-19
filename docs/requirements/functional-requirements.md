@@ -170,9 +170,9 @@ This document defines the functional requirements of the Distributed Real-Time Q
 
 **FR-62** — The system shall allow a Global Administrator to activate a Branch Administrator.
 
-**FR-63** — The system shall allow a Global Administrator to deactivate a Branch Administrator.
+**FR-63** — The system shall allow a Global Administrator to deactivate a Branch Administrator. Deactivating a Branch Administrator shall also end the administrator's current branch assignment.
 
-**FR-64** — The system shall allow a Global Administrator to assign a Branch Administrator to a branch.
+**FR-64** — The system shall allow a Global Administrator to assign a Branch Administrator to a branch. A new assignment ends the administrator's previous assignment, and the history of assignments shall be retained for reporting. An assignment to a branch that already has an active Branch Administrator shall be rejected.
 
 **FR-65** — The system shall require every account created with a temporary password to change it at first login, and shall permit no operation other than changing the password until it has been changed.
 
