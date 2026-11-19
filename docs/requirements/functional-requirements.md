@@ -96,7 +96,7 @@ This document defines the functional requirements of the Distributed Real-Time Q
 
 **FR-35** — The system shall record completed service interactions in the Service Log.
 
-**FR-36** — The system shall record the duration of completed service interactions, measured from the time the ticket was called to the time the service was completed.
+**FR-36** — The system shall record the completion time of completed service interactions. The duration is derived as the time from the ticket's call time to the completion time.
 
 **FR-37** — The system shall calculate estimated waiting times using the current queue size, recent average service duration, and the number of active counters assigned to the selected service, according to: `estimated waiting time = (number of WAITING tickets × average service duration) ÷ number of active counters`. When the queue is empty, the estimated waiting time is zero.
 
