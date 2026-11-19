@@ -8,10 +8,12 @@ This document identifies the primary inputs and outputs of each system process f
 
 ### Inputs
 
-- Customer name
-- Email or username
+- First name and last name
+- National code (used as the login identifier)
+- Phone number
+- Gender
+- Date of birth
 - Password
-- Required registration information
 
 ### Outputs
 
@@ -27,7 +29,7 @@ This document identifies the primary inputs and outputs of each system process f
 
 ### Inputs
 
-- Email or username
+- National code
 - Password
 
 ### Outputs
@@ -217,7 +219,7 @@ This document identifies the primary inputs and outputs of each system process f
 
 - Branch Administrator identity
 - Branch identity
-- Operator information
+- Operator information (including the national code, which is the login identifier)
 - Temporary password (when registering an operator)
 - Counter assignment, where applicable
 - Requested operation
@@ -254,7 +256,7 @@ This document identifies the primary inputs and outputs of each system process f
 ### Inputs
 
 - Global Administrator identity
-- Branch Administrator information
+- Branch Administrator information (including the national code, which is the login identifier)
 - Temporary password (when registering a Branch Administrator)
 - Branch assignment
 - Requested operation
