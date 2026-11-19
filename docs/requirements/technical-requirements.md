@@ -20,10 +20,12 @@ This document defines the technical requirements and technologies used to implem
 
 **TR-05** — The system shall use PostgreSQL transactions and appropriate row-level locking, including `SELECT ... FOR UPDATE` where necessary, to protect ticket issuance and other critical queue operations against concurrent modifications. Database constraints shall also be used where appropriate to enforce data integrity. In particular:
 
-- Ticket numbers shall be generated from a **ticket-number sequence row** per (branch, service, date). This row is a database record used only for numbering and is unrelated to the physical service counters.
-- The sequence row shall be created atomically on first use, for example with `INSERT ... ON CONFLICT ... DO UPDATE` that increments and returns the new value, so that concurrent first requests at the start of an operational day cannot create duplicate rows or bypass the lock. Subsequent increments shall be serialized by the same atomic statement or by `SELECT ... FOR UPDATE` on the row.
-- A unique constraint on `(branch_id, service_id, date, number)` shall act as a final safeguard against duplicate ticket numbers.
+- Ticket numbers shall be generated from the counter value (`last_number`) stored in the daily queue record of the Branch Service (one queue record per Branch Service per day). This value is a database field used only for numbering and is unrelated to the physical service counters.
+- The daily queue record shall be created atomically on first use, for example with `INSERT ... ON CONFLICT ... DO UPDATE` that increments and returns the new value, so that concurrent first requests at the start of an operational day cannot create duplicate rows or bypass the lock. Subsequent increments shall be serialized by the same atomic statement or by `SELECT ... FOR UPDATE` on the row.
+- A unique constraint on `(queue_id, ticket_number)` shall act as a final safeguard against duplicate ticket numbers.
 - The rule that a customer may have at most one active ticket (`WAITING` or `CALLED`) shall be enforced by a partial unique index on the customer identifier restricted to those statuses, in addition to the application-level check.
+
+All of these constraints, including the partial unique indexes (active ticket per customer, open operator-counter assignment, open branch-administrator assignment), shall be defined in the EF Core model (Fluent API) so that they are created by migrations.
 
 ---
 
