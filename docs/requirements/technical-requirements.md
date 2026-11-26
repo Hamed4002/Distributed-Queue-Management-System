@@ -92,3 +92,9 @@ The deployment configuration shall support running multiple backend instances an
 ## 9. Account Provisioning
 
 **TR-23** — The initial Global Administrator account (FR-06) shall be created through an EF Core migration seed or environment-based configuration. Its credentials shall be read from environment variables or configuration, never from source code. Passwords, including temporary passwords, shall be stored only in hashed form.
+
+---
+
+## 10. Web Client
+
+**TR-24** — The system shall provide a web client that, after authentication, presents the panel corresponding to the user's role (Customer, Operator, Branch Administrator or Global Administrator). Access to resources is enforced by the server regardless of the client.
